@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English 3 – Review & Mid-term</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --blue: #2563eb;
+    --sky: #dbeafe;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --red: #dc2626;
+    --red-bg: #fee2e2;
+    --gold: #d97706;
+    --gold-bg: #fef3c7;
+    --gray: #64748b;
+    --light: #f8fafc;
+    --border: #e2e8f0;
+    --white: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: linear-gradient(135deg, #1a2744 0%, #2563eb 100%);
+    color: white;
+    padding: 32px 24px 24px;
+    text-align: center;
+  }
+  .site-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(22px, 5vw, 36px);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .site-header p {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  /* TABS */
+  .tab-bar {
+    display: flex;
+    background: var(--navy);
+    overflow-x: auto;
+    gap: 2px;
+    padding: 0 8px;
+  }
+  .tab-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 13px 16px;
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+  }
+  .tab-btn:hover { color: white; }
+  .tab-btn.active {
+    color: white;
+    border-bottom-color: #60a5fa;
+    background: rgba(255,255,255,0.08);
+  }
+
+  /* PANEL */
+  .panel { display: none; padding: 24px 16px 48px; max-width: 860px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  /* QUIZ META */
+  .quiz-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .quiz-info {
+    font-size: 13px;
+    color: var(--gray);
+  }
+  .quiz-info strong { color: var(--navy); }
+  .quiz-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--blue); color: white; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-outline { background: white; color: var(--navy); border: 1.5px solid var(--border); }
+  .btn-outline:hover { background: var(--sky); border-color: var(--blue); color: var(--blue); }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-danger:hover { background: #b91c1c; }
+
+  /* SECTION HEADING */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin: 28px 0 12px;
+    padding-left: 2px;
+  }
+
+  /* READING PASSAGE */
+  .passage-box {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #334155;
+  }
+  .passage-box h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: var(--navy);
+  }
+  .passage-box ul { padding-left: 20px; }
+  .passage-box li { margin-bottom: 4px; }
+
+  /* QUESTION CARD */
+  .q-card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+  .q-card:hover { border-color: #bfdbfe; }
+  .q-card.answered-correct { border-color: var(--green); background: var(--green-bg); }
+  .q-card.answered-wrong { border-color: var(--red); background: var(--red-bg); }
+  .q-number {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--blue);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .q-text {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.55;
+    margin-bottom: 14px;
+    color: var(--navy);
+  }
+  .q-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media (max-width: 520px) { .q-options { grid-template-columns: 1fr; } }
+  .opt-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--light);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    text-align: left;
+    transition: all 0.15s;
+    color: var(--navy);
+    line-height: 1.4;
+  }
+  .opt-btn:hover:not(:disabled) { background: var(--sky); border-color: var(--blue); color: var(--blue); }
+  .opt-btn:disabled { cursor: default; }
+  .opt-btn .opt-label {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray);
+    transition: all 0.15s;
+  }
+  .opt-btn:hover:not(:disabled) .opt-label { background: var(--blue); color: white; }
+  .opt-btn.correct { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .opt-btn.correct .opt-label { background: var(--green); color: white; }
+  .opt-btn.wrong { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+  .opt-btn.wrong .opt-label { background: var(--red); color: white; }
+  .opt-btn.reveal-correct { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .opt-btn.reveal-correct .opt-label { background: var(--green); color: white; }
+  .feedback {
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok { color: var(--green); }
+  .feedback.no { color: var(--red); }
+
+  /* SCORE BOX */
+  .score-box {
+    background: white;
+    border: 2px solid var(--blue);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+    text-align: center;
+    display: none;
+  }
+  .score-box.show { display: block; }
+  .score-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 52px;
+    color: var(--blue);
+    line-height: 1;
+  }
+  .score-label { font-size: 14px; color: var(--gray); margin-top: 4px; }
+  .score-msg { font-size: 16px; font-weight: 600; margin-top: 10px; color: var(--navy); }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* Incomplete text fill-blank */
+  .fill-blank { font-weight: 700; color: var(--blue); font-size: 16px; }
+
+  /* ANSWER KEY */
+  .ak-section { margin-bottom: 32px; }
+  .ak-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--navy);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--blue);
+  }
+  .ak-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 6px;
+  }
+  .ak-cell {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+  }
+  .ak-qnum { color: var(--gray); font-size: 12px; font-weight: 600; }
+  .ak-ans {
+    font-weight: 700;
+    color: var(--green);
+    background: var(--green-bg);
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 13px;
+  }
+  .ak-note {
+    background: var(--gold-bg);
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #92400e;
+    margin-bottom: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <h1>English 3 — Practice Quiz</h1>
+  <p>HCMUTE &nbsp;|&nbsp; Grammar · Vocabulary · Mid-term Practice</p>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('grammar')">📝 Grammar (100)</button>
+  <button class="tab-btn" onclick="showTab('vocab')">📚 Vocabulary (100)</button>
+  <button class="tab-btn" onclick="showTab('midterm-ab')">🎓 Mid-term A+B (63)</button>
+  <button class="tab-btn" onclick="showTab('midterm-c')">📖 Mid-term C – Reading (20)</button>
+</div>
+
+<!-- ====================== GRAMMAR ====================== -->
+<div id="panel-grammar" class="panel active">
+  <div class="quiz-meta">
+    <div class="quiz-info">Grammar Review &nbsp;·&nbsp; <strong>100 questions</strong></div>
+    <div class="quiz-controls">
+      <button class="btn btn-primary" onclick="checkAll('grammar')">Check All</button>
+      <button class="btn btn-outline" onclick="resetQuiz('grammar')">Reset</button>
+    </div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-grammar"></div></div>
+  <div class="score-box" id="score-grammar">
+    <div class="score-num" id="score-grammar-num">0/100</div>
+    <div class="score-label">Questions correct</div>
+    <div class="score-msg" id="score-grammar-msg"></div>
+  </div>
+  <div id="qs-grammar"></div>
+</div>
+
+<!-- ====================== VOCABULARY ====================== -->
+<div id="panel-vocab" class="panel">
+  <div class="quiz-meta">
+    <div class="quiz-info">Vocabulary Review &nbsp;·&nbsp; <strong>100 questions</strong></div>
+    <div class="quiz-controls">
+      <button class="btn btn-primary" onclick="checkAll('vocab')">Check All</button>
+      <button class="btn btn-outline" onclick="resetQuiz('vocab')">Reset</button>
+    </div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-vocab"></div></div>
+  <div class="score-box" id="score-vocab">
+    <div class="score-num" id="score-vocab-num">0/100</div>
+    <div class="score-label">Questions correct</div>
+    <div class="score-msg" id="score-vocab-msg"></div>
+  </div>
+  <div id="qs-vocab"></div>
+</div>
+
+<!-- ====================== MID-TERM A+B ====================== -->
+<div id="panel-midterm-ab" class="panel">
+  <div class="quiz-meta">
+    <div class="quiz-info">Mid-term Part A + B &nbsp;·&nbsp; <strong>63 questions</strong></div>
+    <div class="quiz-controls">
+      <button class="btn btn-primary" onclick="checkAll('midterm-ab')">Check All</button>
+      <button class="btn btn-outline" onclick="resetQuiz('midterm-ab')">Reset</button>
+    </div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-midterm-ab"></div></div>
+  <div class="score-box" id="score-midterm-ab">
+    <div class="score-num" id="score-midterm-ab-num">0/63</div>
+    <div class="score-label">Questions correct</div>
+    <div class="score-msg" id="score-midterm-ab-msg"></div>
+  </div>
+  <div id="qs-midterm-ab"></div>
+</div>
+
+<!-- ====================== MID-TERM C ====================== -->
+<div id="panel-midterm-c" class="panel">
+  <div class="quiz-meta">
+    <div class="quiz-info">Mid-term Part C – Reading &nbsp;·&nbsp; <strong>20 questions</strong></div>
+    <div class="quiz-controls">
+      <button class="btn btn-primary" onclick="checkAll('midterm-c')">Check All</button>
+      <button class="btn btn-outline" onclick="resetQuiz('midterm-c')">Reset</button>
+    </div>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-midterm-c"></div></div>
+  <div class="score-box" id="score-midterm-c">
+    <div class="score-num" id="score-midterm-c-num">0/20</div>
+    <div class="score-label">Questions correct</div>
+    <div class="score-msg" id="score-midterm-c-msg"></div>
+  </div>
+  <div id="qs-midterm-c"></div>
+</div>
+
+<script>
+/* =========================================================
+   DATA
+   ========================================================= */
+
+const grammarQs = [
+  {q:"Currently, my brother __________ in a small town near the sea.",opts:["lives","lived","is living","has lived"],ans:2},
+  {q:"She felt very __________ after watching the movie.",opts:["bored","boring","excite","exciting"],ans:0},
+  {q:"My parents __________ to work by motorbike every day.",opts:["go","goes","went","are gone"],ans:0},
+  {q:"This bag is too heavy. Can you help me __________ it?",opts:["bring","take","carry","hold"],ans:2},
+  {q:"We usually have lunch __________ noon.",opts:["in","on","at","to"],ans:2},
+  {q:"My sister works as a __________ in a hospital.",opts:["doctor","patient","engineer","visitor"],ans:0},
+  {q:"They are interested __________ learning English online.",opts:["at","in","on","with"],ans:1},
+  {q:"Don't forget to turn __________ the lights before leaving.",opts:["on","off","up","down"],ans:1},
+  {q:"This exercise is __________ than the previous one.",opts:["easy","easier","easiest","more easy"],ans:1},
+  {q:"My house is __________ the post office and the bank.",opts:["among","between","next","near"],ans:1},
+  {q:"We don't have __________ sugar left.",opts:["many","much","a few","a number"],ans:1},
+  {q:"She __________ TV when I came home.",opts:["watched","watches","was watching","is watching"],ans:2},
+  {q:"My father is good __________ fixing machines.",opts:["in","on","at","with"],ans:2},
+  {q:"There __________ many students in the classroom.",opts:["is","was","are","be"],ans:2},
+  {q:"I often listen to music __________ doing homework.",opts:["because","when","while","so"],ans:2},
+  {q:"He bought __________ umbrella because it was raining.",opts:["a","an","the","Ø"],ans:1},
+  {q:"This is the __________ building in the city.",opts:["taller","most tall","tallest","more tall"],ans:2},
+  {q:"My mother asked me __________ late.",opts:["not stay","not to stay","don't stay","didn't stay"],ans:1},
+  {q:"I usually wake up __________ 6 a.m.",opts:["in","on","at","to"],ans:2},
+  {q:"They __________ football after school yesterday.",opts:["play","played","are playing","have played"],ans:1},
+  {q:"Would you like __________ coffee or tea?",opts:["some","any","a","many"],ans:0},
+  {q:"My sister is afraid __________ dogs.",opts:["at","with","of","for"],ans:2},
+  {q:"He runs __________ than his brother.",opts:["fast","faster","fastest","more fast"],ans:1},
+  {q:"There isn't __________ milk in the fridge.",opts:["many","much","few","several"],ans:1},
+  {q:"I think English is __________ subject at school.",opts:["interesting","interested","interest","interests"],ans:0},
+  {q:"She __________ to music every evening.",opts:["listens","listens to","hears","hears to"],ans:1},
+  {q:"Let's __________ a break now.",opts:["make","take","do","have"],ans:1},
+  {q:"My hometown is famous __________ beautiful beaches.",opts:["for","with","about","of"],ans:0},
+  {q:"This shirt is too small. I need a __________ one.",opts:["more big","biggest","bigger","big"],ans:2},
+  {q:"My parents always __________ me to study hard.",opts:["advise","advice","suggest","suggestion"],ans:0},
+  {q:"We were tired, __________ we decided to go home early.",opts:["but","because","so","although"],ans:2},
+  {q:"He can't come today __________ he is sick.",opts:["so","but","because","although"],ans:2},
+  {q:"There are __________ people waiting outside.",opts:["a lot","much","little","one"],ans:0},
+  {q:"My sister usually __________ up early.",opts:["get","gets","got","getting"],ans:1},
+  {q:"The weather is __________ today than yesterday.",opts:["hot","hotter","hottest","more hot"],ans:1},
+  {q:"I __________ English for three years.",opts:["study","studied","have studied","am studying"],ans:2},
+  {q:"She has worked here __________ 2020.",opts:["for","since","during","from"],ans:1},
+  {q:"If it __________ tomorrow, we will stay at home.",opts:["rain","rains","rained","raining"],ans:1},
+  {q:"He asked me where I __________ from.",opts:["am","was","were","have been"],ans:1},
+  {q:"This is the man __________ car was stolen.",opts:["who","which","whose","whom"],ans:2},
+  {q:"My father enjoys __________ newspapers in the morning.",opts:["read","reading","to read","reads"],ans:1},
+  {q:"I forgot __________ Anna about the meeting.",opts:["tell","telling","to tell","told"],ans:2},
+  {q:"The bridge __________ last year.",opts:["builds","built","was built","has built"],ans:2},
+  {q:"She speaks __________ than her sister.",opts:["confident","confidently","more confident","most confident"],ans:2},
+  {q:"He didn't have enough money, __________ he couldn't buy the phone.",opts:["because","but","so","although"],ans:2},
+  {q:"This exercise is not as __________ as the last one.",opts:["difficult","more difficult","most difficult","difficulty"],ans:0},
+  {q:"We are looking forward to __________ you soon.",opts:["see","seeing","to see","saw"],ans:1},
+  {q:"She __________ be tired. She has worked all day.",opts:["can","must","should","may"],ans:1},
+  {q:"My brother __________ for the company since 2018.",opts:["works","worked","has worked","is working"],ans:2},
+  {q:"That is the best movie I __________.",opts:["see","saw","have seen","had seen"],ans:2},
+  {q:"The teacher asked us __________ quietly.",opts:["work","working","to work","worked"],ans:2},
+  {q:"This road is very dangerous. Cars drive __________ here.",opts:["careful","carefully","careless","carelessly"],ans:1},
+  {q:"I didn't go out __________ it was raining heavily.",opts:["so","but","because","although"],ans:2},
+  {q:"He is not old enough __________ a motorbike.",opts:["ride","riding","to ride","rode"],ans:2},
+  {q:"The students were tired __________ the long exam.",opts:["because","because of","although","so"],ans:1},
+  {q:"We __________ dinner when the phone rang.",opts:["had","were having","have","are having"],ans:1},
+  {q:"She bought the dress __________ it was expensive.",opts:["because","but","although","so"],ans:2},
+  {q:"This is the first time I __________ this city.",opts:["visit","visited","have visited","had visited"],ans:2},
+  {q:"He suggested __________ a taxi.",opts:["take","taking","to take","took"],ans:1},
+  {q:"The email __________ by the manager yesterday.",opts:["sent","was sent","is sent","sends"],ans:1},
+  {q:"I don't know __________ she will come or not.",opts:["what","whether","that","how"],ans:1},
+  {q:"She speaks English __________ than before.",opts:["fluent","fluently","more fluently","most fluently"],ans:2},
+  {q:"If I __________ more time, I would help you.",opts:["have","had","will have","have had"],ans:1},
+  {q:"The hotel __________ we stayed was very comfortable.",opts:["which","where","who","when"],ans:1},
+  {q:"He apologized __________ being late.",opts:["to","for","about","with"],ans:1},
+  {q:"I prefer tea __________ coffee.",opts:["than","from","to","with"],ans:2},
+  {q:"She looks __________ than last year.",opts:["happy","happier","happiest","more happier"],ans:1},
+  {q:"The bus arrived __________ than usual.",opts:["early","earlier","earliest","more early"],ans:1},
+  {q:"They warned us __________ touch the machine.",opts:["not","not to","don't","didn't"],ans:1},
+  {q:"He didn't answer the phone __________ he was busy.",opts:["but","so","because","although"],ans:2},
+  {q:"By the time we arrived, the meeting __________.",opts:["finished","has finished","had finished","finishes"],ans:2},
+  {q:"She said she __________ the report the next day.",opts:["will finish","finishes","would finish","finished"],ans:2},
+  {q:"This is the book __________ I told you about.",opts:["who","which","whose","where"],ans:1},
+  {q:"If he had studied harder, he __________ the exam.",opts:["passes","passed","would pass","would have passed"],ans:3},
+  {q:"The man __________ wallet was found thanked the police.",opts:["who","which","whose","whom"],ans:2},
+  {q:"She denied __________ the window.",opts:["break","breaking","to break","broke"],ans:1},
+  {q:"I wish I __________ more free time.",opts:["have","had","will have","have had"],ans:1},
+  {q:"The project __________ by the team before the deadline.",opts:["completed","was completed","has completed","completes"],ans:1},
+  {q:"He asked me how long I __________ English.",opts:["learn","learned","have learned","had learned"],ans:3},
+  {q:"Not only __________ late, but he also forgot the documents.",opts:["he arrived","arrived he","did he arrive","he did arrive"],ans:2},
+  {q:"The house __________ built in the 18th century is still standing.",opts:["who","where","which","whose"],ans:2},
+  {q:"She suggested that we __________ earlier.",opts:["leave","left","leaving","to leave"],ans:0},
+  {q:"He speaks as if he __________ everything.",opts:["knows","knew","had known","know"],ans:1},
+  {q:"The harder you study, __________ results you get.",opts:["good","better","the better","best"],ans:2},
+  {q:"I regret __________ her the truth.",opts:["tell","telling","to tell","told"],ans:1},
+  {q:"This problem needs __________ immediately.",opts:["solve","solved","solving","to solve"],ans:2},
+  {q:"She is accustomed to __________ up early.",opts:["get","getting","to get","got"],ans:1},
+  {q:"The manager insisted that the report __________ finished today.",opts:["is","was","be","being"],ans:2},
+  {q:"He behaved __________ during the interview.",opts:["confidence","confident","confidently","most confident"],ans:2},
+  {q:"The reason __________ he left was unclear.",opts:["why","which","that","when"],ans:0},
+  {q:"Hardly __________ when the rain started.",opts:["had we arrived","we had arrived","did we arrive","we arrived"],ans:0},
+  {q:"She had her hair __________ before the party.",opts:["cut","cutting","to cut","cuts"],ans:0},
+  {q:"The teacher made the students __________ the test again.",opts:["do","to do","doing","did"],ans:0},
+  {q:"I'd rather __________ at home than go out.",opts:["stay","staying","to stay","stayed"],ans:0},
+  {q:"The book was __________ interesting that I finished it in one day.",opts:["too","so","such","very"],ans:1},
+  {q:"He apologized for __________ my feelings.",opts:["hurt","hurting","to hurt","hurts"],ans:1},
+  {q:"She spoke quietly __________ wake the baby.",opts:["so as not to","because","although","unless"],ans:0},
+  {q:"This is the most difficult task I __________.",opts:["ever do","ever did","have ever done","had ever done"],ans:2},
+  {q:"No sooner __________ than the lights went out.",opts:["had we arrived","we arrived","did we arrive","we had arrived"],ans:0},
+  {q:"He suggested that the meeting __________ postponed.",opts:["is","was","be","being"],ans:2}
+];
+
+const vocabQs = [
+  // Jobs & People 1–20
+  {q:"My uncle works as a __________ at a shopping mall.",opts:["assistant","security guard","employer","resident"],ans:1},
+  {q:"A person who protects buildings and people is a __________.",opts:["shop owner","policeman","security guard","instructor"],ans:2},
+  {q:"When people reach their __________, they often retire from work.",opts:["infancy","adolescence","middle age","childhood"],ans:2},
+  {q:"A person who works for a company is an __________.",opts:["employer","employment","employee","employ"],ans:2},
+  {q:"The company is looking for a skilled __________ for the new project.",opts:["candidate","discipline","instruction","celebration"],ans:0},
+  {q:"My parents are __________, so they will retire soon.",opts:["infants","adolescents","pensioners","teenagers"],ans:2},
+  {q:"She is highly respected by her __________ at work.",opts:["classmates","colleagues","neighbours","tourists"],ans:1},
+  {q:"A person who owns a business is called an __________.",opts:["employee","employer","resident","candidate"],ans:1},
+  {q:"Teachers often give students homework and __________.",opts:["instructions","decorations","celebrations","inventions"],ans:0},
+  {q:"This job mainly involves __________ people entering the building.",opts:["observing","observation","observer","observed"],ans:0},
+  // Education 21–40
+  {q:"Students receive a course __________ after finishing the program.",opts:["discipline","certificate","instruction","schedule"],ans:1},
+  {q:"Online learning helps students become more __________.",opts:["social","dependent","independent","nervous"],ans:2},
+  {q:"Weekly __________ help students practise what they learn.",opts:["homework","classroom","subject","holiday"],ans:0},
+  {q:"Teachers write notes on the __________ board.",opts:["fire exit","notice board","elevator","filing cabinet"],ans:1},
+  {q:"Exams and quizzes are forms of student __________.",opts:["discipline","assessment","decoration","celebration"],ans:1},
+  {q:"Students often pick up new skills through __________ practice.",opts:["repeated","repetition","repeat","repeatedly"],ans:0},
+  {q:"A list of courses and times is called a __________.",opts:["qualification","schedule","discipline","certificate"],ans:1},
+  {q:"Students are expected to follow school __________.",opts:["resources","rules","experiments","services"],ans:1},
+  {q:"Online courses allow learners to study at their own __________.",opts:["speed","place","time","pace"],ans:3},
+  {q:"Group discussions help improve students' __________ skills.",opts:["social","natural","private","technical"],ans:0},
+  // Travel & Places 41–60
+  {q:"A vehicle people live in while travelling is a __________.",opts:["truck","campervan","container","bus"],ans:1},
+  {q:"Visitors have to walk __________ the stairs.",opts:["on","through","up","into"],ans:2},
+  {q:"The hotel offers __________ views of the mountains.",opts:["ancient","boring","spectacular","ordinary"],ans:2},
+  {q:"Tourists often enjoy __________ food when travelling.",opts:["local","natural","official","careful"],ans:0},
+  {q:"The cruise includes guided tours at __________ cities.",opts:["destination","resident","department","instruction"],ans:0},
+  {q:"A long journey by sea is called a __________.",opts:["voyage","walk","schedule","traffic"],ans:0},
+  {q:"The neighbourhood is quiet, safe, and __________.",opts:["friendly","dangerous","crowded","noisy"],ans:0},
+  {q:"People often rely on public __________ in big cities.",opts:["transport","travel","traffic","direction"],ans:0},
+  {q:"The festival attracts thousands of __________ every year.",opts:["residents","tourists","employees","landlords"],ans:1},
+  {q:"We stayed in a small apartment near the city __________.",opts:["centre","resident","discipline","subject"],ans:0},
+  // Feelings & Descriptions 61–80
+  {q:"I feel really __________ about my exam results.",opts:["worrying","worried","fascinating","exciting"],ans:1},
+  {q:"The movie was so __________ that everyone stayed until the end.",opts:["bored","boring","excited","exciting"],ans:3},
+  {q:"She was __________ of deep water.",opts:["frightening","frightened","frighten","frightens"],ans:1},
+  {q:"The view from the mountain was absolutely __________.",opts:["ancient","stunning","ordinary","practical"],ans:1},
+  {q:"He was __________ to hear the good news.",opts:["exciting","excited","boring","bored"],ans:1},
+  {q:"This site is __________ and cannot be replaced.",opts:["legendary","unique","ancient","famous"],ans:1},
+  {q:"The ceremony included long, sometimes dull __________.",opts:["decorations","speeches","entrances","dresses"],ans:1},
+  {q:"The weather was __________ for travelling.",opts:["perfect","terrible","dangerous","impossible"],ans:0},
+  {q:"Her explanation was clear and __________.",opts:["confusing","helpful","difficult","boring"],ans:1},
+  {q:"The job offer sounded very __________.",opts:["attractive","frightened","boring","worried"],ans:0},
+  // Daily Life 81–100
+  {q:"Mobile phones are not __________ in the classroom.",opts:["allowed","provided","included","completed"],ans:0},
+  {q:"Coal and gas are natural __________.",opts:["experiments","resources","instructions","services"],ans:1},
+  {q:"Scientists do many __________ before reaching conclusions.",opts:["experiences","instructions","experiments","celebrations"],ans:2},
+  {q:"The notice was sent to all __________.",opts:["employees","employers","residents","tourists"],ans:0},
+  {q:"He forgot his password and couldn't __________ his account.",opts:["set up","log on to","search","subscribe"],ans:1},
+  {q:"The company plans to take legal __________.",opts:["discipline","action","activity","schedule"],ans:1},
+  {q:"The __________ area of the warehouse was damaged.",opts:["loading","parking","living","shopping"],ans:0},
+  {q:"Payment must be made in __________ only.",opts:["credit","cash","cheque","online"],ans:1},
+  {q:"The manager asked for more __________ about the problem.",opts:["instruction","information","discipline","celebration"],ans:1},
+  {q:"This rule applies to all __________.",opts:["visitors","residents","employees","tourists"],ans:2},
+  {q:"The ceremony marked an important __________.",opts:["celebrate","celebrator","celebration","celebrating"],ans:2},
+  {q:"People often gather for family __________ during holidays.",opts:["discipline","reunion","qualification","instruction"],ans:1},
+  {q:"The advertisement was posted on the __________ board.",opts:["notice","information","direction","message"],ans:0},
+  {q:"She adapted quickly to the new working __________.",opts:["discipline","environment","subject","experiment"],ans:1},
+  {q:"The course helped improve his professional __________.",opts:["qualification","celebration","decoration","discipline"],ans:0},
+  {q:"This machine was built in the __________ century.",opts:["modern","ancient","middle","recent"],ans:1},
+  {q:"The guide explained local __________ to tourists.",opts:["traditions","experiments","instructions","disciplines"],ans:0},
+  {q:"The hotel offers excellent customer __________.",opts:["service","discipline","schedule","instruction"],ans:0},
+  {q:"She is interested in learning new __________.",opts:["languages","subjects","jobs","places"],ans:0},
+  {q:"The building has modern safety __________.",opts:["devices","instructions","experiments","celebrations"],ans:0}
+];
+
+// Mid-term Part A (60 Qs) + Part B (3 fill-blank passages)
+const midtermABQs = [
+  // Part A
+  {section:"Part A – Multiple Choice", q:"This house __________ in 1970 by my grandfather.",opts:["has been built","built","has built","was built"],ans:3},
+  {q:"Are you interested in the __________ on the notice board?",opts:["advertised","advertiser","advert","advertising"],ans:2},
+  {q:"I had an __________ time on my trip.",opts:["exciting","excited","bored","boring"],ans:0},
+  {q:"My sister __________ last month and will get married soon.",opts:["got a pension","got engaged","left home","started a family"],ans:1},
+  {q:"Don't wear that __________. It doesn't look good on you.",opts:["parade","costume","drum","float"],ans:1},
+  {q:"My parents are __________, so they will retire soon.",opts:["infants","adolescents","pensioners","middle-aged"],ans:2},
+  {q:"My uncle works as a __________ at a shopping mall.",opts:["shop assistant","security guard","shop owner","policeman"],ans:1},
+  {q:"Visitors have to walk __________ the stairs.",opts:["to","through","at","up"],ans:3},
+  {q:"Mobile phones __________ in the classroom.",opts:["allow","allowed","are allowed","are not allowed"],ans:3},
+  {q:"Coal and gas are natural __________.",opts:["resources","difficulties","development","economy"],ans:0},
+  {q:"I'm really __________ about my dog.",opts:["worrying","worried","fascinating","fascinated"],ans:1},
+  {q:"She __________ a lot of English from watching cartoons.",opts:["passes on","sets up","takes away","picks up"],ans:3},
+  {q:"The mountain has __________ views.",opts:["ancient","unique","stunning","boring"],ans:2},
+  {q:"Let's meet __________ the coffee area at 11.",opts:["at","on","into","up"],ans:0},
+  {q:"When I was a student, I __________ football every weekend.",opts:["used to play","play","has played","playing"],ans:0},
+  {q:"A __________ is a vehicle people live in when travelling.",opts:["truck","campervan","container","car"],ans:1},
+  {q:"The ceremony began with long __________.",opts:["decorations","entrances","dresses","speeches"],ans:3},
+  {q:"Tet holiday is a time for families to __________.",opts:["get back","get engaged","get together","get ready"],ans:2},
+  {q:"Don't wait for me. I __________ late.",opts:["will be","am","might be","am going to be"],ans:0},
+  {q:"People wrote on soft __________ in the past.",opts:["bones","paper","clay","plastic"],ans:2},
+  {q:"If the weather is good, the concert __________ well.",opts:["goes","will go","went","is going"],ans:1},
+  {q:"Do you know __________ Vincom opens?",opts:["what time Vincom opened","what time does Vincom open","what time Vincom opens","what time did Vincom open"],ans:2},
+  {q:"I __________ to Egypt two years ago.",opts:["went","have gone","had gone","was going"],ans:0},
+  {q:"He finds it easy to __________ new languages.",opts:["pick up","give up","give away","pass on"],ans:0},
+  {q:"It's not polite __________ someone in public.",opts:["criticize","criticized","to criticize","criticizing"],ans:2},
+  {q:"They can play several __________ instruments.",opts:["music","musical","musician","musically"],ans:1},
+  {q:"I wish to work in a __________ laboratory.",opts:["skilled","old-fashioned","crowded","well-equipped"],ans:3},
+  {q:"My family has lived here __________ the 18th century.",opts:["for","during","since","in"],ans:2},
+  {q:"She adapts quickly thanks to strict __________ at home.",opts:["timetable","qualification","discipline","schedule"],ans:2},
+  {q:"Scientists do many __________ before reaching conclusions.",opts:["experiences","inventions","experiments","instructions"],ans:2},
+  {q:"Look at the __________ for information about courses.",opts:["filing cabinet","notice board","fire exit","elevator"],ans:1},
+  {q:"He looked in the back of the book __________ the audioscript.",opts:["find","finding","to find","found"],ans:2},
+  {q:"Her parents __________ hard since she __________ college.",opts:["worked / entered","have worked / entered","were working / entered","have worked / have entered"],ans:1},
+  {q:"If I __________ the target, I __________ myself a holiday.",opts:["meet / reward","will meet / reward","met / rewarded","meet / will reward"],ans:3},
+  {q:"My father usually cycles if the weather __________ good.",opts:["is","will be","are","was"],ans:0},
+  {q:"I couldn't __________ my account because I forgot the password.",opts:["set up","search","subscribe to","log on to"],ans:3},
+  {q:"The trip turned out to be __________.",opts:["excited","frightening","frightened","exciting"],ans:3},
+  {q:"The examiner __________ us to stop writing.",opts:["applies","rules","instructs","schedules"],ans:2},
+  {q:"The site is __________ and cannot be replaced.",opts:["ancient","legendary","stunning","unique"],ans:3},
+  {q:"If lightning __________ a wooden building, it may cause fire.",opts:["hit","hits","will hit","hitting"],ans:1},
+  {q:"I __________ English for seven years before I __________ university.",opts:["studied / started","had studied / started","studied / had started","had studied / had started"],ans:1},
+  {q:"They come from areas __________ there isn't enough clean water.",opts:["which","who","whom","where"],ans:3},
+  {q:"The author __________ wrote this book is British.",opts:["which","who","whom","where"],ans:1},
+  {q:"Houses __________ overlook the forest are expensive.",opts:["who","when","which","whom"],ans:2},
+  {q:"A stone block __________ near the ancient capital in 1967.",opts:["discovered","was discovered","is discovered","discovers"],ans:1},
+  {q:"She realized she __________ her passport at home.",opts:["left","had left","leaves","has left"],ans:1},
+  {q:"Paul said that he __________ the museum.",opts:["visits","visited","has visited","had visited"],ans:3},
+  {q:"She was __________ of deep water because it was so __________.",opts:["frightened / frightening","frightening / frightened","frightens / frightening","frightened / frightens"],ans:0},
+  {q:"The adventure and romance __________, but the hard work remains.",opts:["disappear","disappeared","have disappeared","disappearing"],ans:2},
+  {q:"In 1800, Volta built a machine __________ was the first battery.",opts:["which","what","why","who"],ans:0},
+  {q:"I don't think it's really nice __________ others in public.",opts:["criticize","criticized","to criticize","criticizing"],ans:2},
+  {q:"They __________ it on TV after he __________ them.",opts:["saw / told","had seen / told","saw / had told","had seen / has told"],ans:2},
+  {q:"When people are in their __________, they often settle down.",opts:["infancy","adolescence","teenage","middle age"],ans:3},
+  {q:"The festival was a huge __________ with costumes and fireworks.",opts:["celebrate","celebrator","celebration","celebrated"],ans:2},
+  {q:"Once the couple __________, people organize a wedding.",opts:["get ready","get together","get engaged","get back"],ans:2},
+  {q:"He __________ his team this afternoon for extra practice.",opts:["met","meets","is meeting","was meeting"],ans:2},
+  {q:"This job mainly involves __________ people entering the building.",opts:["observe","observed","observing","observation"],ans:2},
+  {q:"If I had more money, I __________ a new laptop.",opts:["will buy","buy","would buy","would have bought"],ans:2},
+  {q:"The ceremony began with long, sometimes dull __________.",opts:["decorations","entrances","speeches","dresses"],ans:2},
+  {q:"Since I turned 18, my life __________ a lot.",opts:["changed","has changed","had changed","changes"],ans:1},
+  // Part B – Passage 1
+  {section:"Part B – Incomplete Texts", passage: `Many universities now offer online courses to support students who cannot attend classes on campus. These courses allow learners to study at their own pace and access materials anytime through digital platforms.<br>Most online courses include video lectures, reading materials, and weekly <span class="fill-blank">1 ____</span>. Students are usually assessed based on assignments, quizzes, and participation in online discussions. At the end of the course, learners who successfully complete all requirements will receive a course <span class="fill-blank">2 ____</span>.<br>Online learning has become increasingly popular because it offers flexibility and helps students improve their <span class="fill-blank">3 ____</span> learning skills.`, q:"Question 1: weekly __________",opts:["homework","schedule","classroom","subject"],ans:0},
+  {q:"Question 2: receive a course __________",opts:["instruction","diploma","certificate","discipline"],ans:2},
+  {q:"Question 3: __________ learning skills",opts:["independent","dependent","social","practical"],ans:0},
+  // Part B – Passage 2
+  {passage:`This modern apartment is located in a quiet and convenient neighbourhood near the city center... There are large windows offering <span class="fill-blank">4 ____</span> views of the river and surrounding buildings.<br>The apartment is situated in an area <span class="fill-blank">5 ____</span> is close to public transport... an ideal choice for both short-term visitors and long-term <span class="fill-blank">6 ____</span>.<br>This accommodation is especially suitable for professionals who value comfort and <span class="fill-blank">7 ____</span>.`, q:"Question 4: __________ views",opts:["ancient","spectacular","ordinary","basic"],ans:1},
+  {q:"Question 5: an area __________ is close to public transport",opts:["who","where","which","when"],ans:2},
+  {q:"Question 6: long-term __________",opts:["tourists","landlords","residents","drivers"],ans:2},
+  {q:"Question 7: comfort and __________",opts:["convenience","invention","qualification","discipline"],ans:0},
+  // Part B – Passage 3
+  {passage:`I am writing to recommend Ms. Laura Chen, who <span class="fill-blank">8 ____</span> as a marketing assistant in our company for the past three years... She always <span class="fill-blank">9 ____</span> her tasks efficiently... I strongly believe she will be an excellent <span class="fill-blank">10 ____</span> for any organization... Please feel free to contact me if you need any further <span class="fill-blank">11 ____</span>.`, q:"Question 8: who __________ as a marketing assistant",opts:["works","worked","is working","has worked"],ans:3},
+  {q:"Question 9: She always __________ her tasks efficiently",opts:["completes","will complete","is completing","has completed"],ans:0},
+  {q:"Question 10: an excellent __________",opts:["employer","employee","employment","employ"],ans:1},
+  {q:"Question 11: any further __________",opts:["information","instruction","suggestion","discipline"],ans:0}
+];
+
+const midtermCQs = [
+  // Passage 1 – Huggy Dog
+  {passage:`<h3>Fire Damages Pet Food Warehouse</h3>Rochester, April 1st. Late in the evening of March 29th, a fire caused extensive damage to the Huggy Dog Co. pet food warehouse on West 24th Street. There were no injuries. The only employee on the premises was security guard Russ Loupinek, who called in the fire at 9:47 p.m. Fire fighters arrived minutes later and put out the blaze. Most of the loading area was destroyed. The cost of the damage is estimated at $400,000.<br><br>Early investigations point to a faulty heating system as the cause of the fire. According to a Huggy Dog spokesperson, the company that installed the system, AMC Heaters, had ignored numerous complaints about the heating units over the past four weeks. Huggy Dog plans to take legal action against AMC Heaters.`,
+   q:"What business is Huggy Dog Co. in?",opts:["Fire fighting","Heating systems","Pet food","Installations"],ans:2},
+  {q:"What part of the warehouse was most affected by the fire?",opts:["The premises","The loading area","The security guard","The pet food"],ans:1},
+  {q:"What will Huggy Dog Co. most likely do next?",opts:["Move to a new place","Start a heating systems business","Go to court","Hire a new security guard"],ans:2},
+  // Passage 2 – Car ad
+  {passage:`<h3>For Sale – 1986 Celebrity Eurosport</h3>Low mileage and one careful previous owner. Classic F-platform. Has original doors and GM/Delco stereo! New exhaust, shocks, tires, and brakes – all replaced within last 6 months.<br>Needs a paint touch-up and some minor repair work on <strong>fenders, rear bumper, and engine</strong>. Seat covers and Ziggy window shade included.<br>Reliable transportation for a student, or as a second car. <strong>$400 or best offer. Cash only please.</strong> Call Randy, 398-3412, weekdays before 5 p.m.`,
+   q:"What part of the car needs repair?",opts:["Shocks","Fenders","Exhaust","Tires"],ans:1},
+  {q:"What form of payment does the seller want?",opts:["Credit card","Personal check","Money order","Cash"],ans:3},
+  {q:"When could an interested buyer call?",opts:["Sunday morning","Tuesday night","Thursday morning","Saturday night"],ans:2},
+  // Passage 3 – Fax
+  {passage:`<h3>Fax Cover Sheet</h3><strong>Date:</strong> August 15th, 2004 &nbsp; <strong>Time:</strong> 9:55 a.m.<br><strong>To:</strong> Saul Leganza, Guzzi Imports<br><strong>From:</strong> Peter Brown, Mel-Mart Superstore<br><br>This is just to confirm that I received your phone message. My flight to California has been canceled because of bad weather. I will now be leaving Denver and arriving at LAX on United Flight 77 tomorrow. I am sorry for any trouble this will cause you. Hopefully we can reschedule our meetings for the 17th. I have attached my new itinerary.`,
+   q:"Where is Mr. Brown now?",opts:["LAX","California","Denver","United"],ans:2},
+  {q:"Why did Mr. Brown send this fax?",opts:["To confirm a reservation","To reschedule a flight","To cancel a meeting","To confirm a message"],ans:3},
+  {q:"When will Mr. Brown arrive in California?",opts:["August 14th","August 15th","August 16th","August 17th"],ans:2},
+  // Passage 4 – Movies
+  {passage:`<h3>"Movies at the Marquis"</h3>Classic movies special feature week:<br><br><strong>Blazing Rules (1956)</strong> – Western. <em>Monday, 6:00 p.m.</em><br><strong>The Bilge and the Brine (1943)</strong> – Drama. <em>Wednesday, 7:30 p.m.</em><br><strong>Elvis and the Swamp Monster (1978)</strong> – Comedy. <em>Friday, 8:00 p.m.</em><br><strong>Digstown (1987)</strong> – Comedy. <em>Tuesday through Thursday, 9:00 p.m.</em>`,
+   q:"On what day can a person see two movies?",opts:["Monday","Friday","Sunday","Wednesday"],ans:3},
+  {q:"What two movies are the same type?",opts:["Blazing Rules & Digstown","The Bilge and the Brine & Digstown","Elvis and the Swamp Monster & Blazing Rules","Digstown & Elvis and the Swamp Monster"],ans:3},
+  {q:"Which movie is the oldest?",opts:["Blazing Rules","Elvis and the Swamp Monster","The Bilge and the Brine","Digstown"],ans:2},
+  // Passage 5 – Ceramics letter
+  {passage:`<h3>Bugs and Beans Coffee Shop – Letter to Mr. Tomi Galoob</h3>Thank you for sending me a copy of your latest ceramics catalog. You have been sending us your catalog here at the museum for several years now...<br><br>I would like to order <strong>50 more of the ladybug bowls</strong>. They are perfect for holding sugar cubes... However, it was the <strong>scorpion cups</strong> that really grabbed my attention. I am interested in purchasing approximately <strong>25 of the extra-large scorpion cups</strong>.<br><br><strong>Please send me information on your available stock. I would appreciate receiving the information by fax.</strong><br><br>Sincerely, Linda Trump, Manager`,
+   q:"What does the letter request?",opts:["The latest catalog","Information about stock","25 large cups","Vases and bowls"],ans:1},
+  {q:"How should the ceramics company respond?",opts:["Send a letter","Make a phone call","Send a fax","Write an email"],ans:2},
+  {q:"How long has Mr. Galoob been sending his catalog to the coffee shop?",opts:["Since last year","For many years","For a short time","For a month"],ans:1},
+  {q:"What will the coffee shop use to hold sugar?",opts:["Scorpion cups","The catalog","Ladybug bowls","Fax"],ans:2},
+  // Passage 6 – Dazzle Tours
+  {passage:`<h3>Dream Vacation – Dazzle Tours</h3>A Caribbean cruise with stops in <strong>Jamaica, Aruba, and Puerto Rico</strong> for only $499 (excluding taxes, service charges, and visa fees).<br><br>Your tour includes: round-trip airfare from Palm Beach to Belize, all meals and on-board entertainment, buffet lunch, three-course dinner, sports center, sauna, casino, jet-skiing, scuba diving, and guided tours at destination cities.<br><br>All tours last <strong>seven days and six nights</strong>. Departures every Sunday until August 31st. Reservations must be made <strong>two weeks in advance</strong>.`,
+   q:"Which place is NOT a stop for the cruise?",opts:["Jamaica","Aruba","Palm Beach","Puerto Rico"],ans:2},
+  {q:"What is NOT included in the tour price?",opts:["Meals","Airplane tickets","Service charges","Taxes"],ans:2},
+  {q:"If you wanted to go on June 21st, which would be the best date to make reservations?",opts:["August 31st","June 14th","Two weeks later","June 5th"],ans:1},
+  {q:"How long does a Dazzle Tour last?",opts:["6 days","Until August 31st","2 weeks","7 days"],ans:3}
+];
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function renderQuiz(quizId, data) {
+  const container = document.getElementById('qs-' + quizId);
+  if (!container) return;
+  container.innerHTML = '';
+  let lastSection = '';
+  let lastPassage = '';
+
+  data.forEach((item, idx) => {
+    // Section label
+    if (item.section && item.section !== lastSection) {
+      lastSection = item.section;
+      const lbl = document.createElement('div');
+      lbl.className = 'section-label';
+      lbl.textContent = item.section;
+      container.appendChild(lbl);
+    }
+    // Passage box
+    if (item.passage && item.passage !== lastPassage) {
+      lastPassage = item.passage;
+      const pb = document.createElement('div');
+      pb.className = 'passage-box';
+      pb.innerHTML = item.passage;
+      container.appendChild(pb);
+    }
+
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = `card-${quizId}-${idx}`;
+
+    const labels = ['A','B','C','D'];
+    card.innerHTML = `
+      <div class="q-number">Q${idx+1}</div>
+      <div class="q-text">${item.q}</div>
+      <div class="q-options">
+        ${item.opts.map((o,i)=>`
+          <button class="opt-btn" id="opt-${quizId}-${idx}-${i}" onclick="selectAnswer('${quizId}',${idx},${i})">
+            <span class="opt-label">${labels[i]}</span><span>${o}</span>
+          </button>`).join('')}
+      </div>
+      <div class="feedback" id="fb-${quizId}-${idx}"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+/* =========================================================
+   INTERACTION
+   ========================================================= */
+const state = {}; // quizId -> {answers: [], checked: []}
+
+function getState(quizId, len) {
+  if (!state[quizId]) {
+    state[quizId] = { answers: new Array(len).fill(null), checked: new Array(len).fill(false) };
+  }
+  return state[quizId];
+}
+
+function selectAnswer(quizId, qIdx, optIdx) {
+  const data = getDataForQuiz(quizId);
+  const s = getState(quizId, data.length);
+  if (s.checked[qIdx]) return; // already checked
+
+  s.answers[qIdx] = optIdx;
+
+  // Highlight selected
+  const labels = ['A','B','C','D'];
+  data[qIdx].opts.forEach((_, i) => {
+    const btn = document.getElementById(`opt-${quizId}-${qIdx}-${i}`);
+    btn.className = 'opt-btn';
+    if (i === optIdx) btn.style.borderColor = '#2563eb';
+    else btn.style.borderColor = '';
+  });
+
+  // Show immediate feedback
+  const correct = data[qIdx].ans;
+  const fb = document.getElementById(`fb-${quizId}-${qIdx}`);
+
+  // Mark
+  const selectedBtn = document.getElementById(`opt-${quizId}-${qIdx}-${optIdx}`);
+  if (optIdx === correct) {
+    selectedBtn.className = 'opt-btn correct';
+    selectedBtn.disabled = true;
+    fb.className = 'feedback show ok';
+    fb.textContent = '✓ Correct!';
+    document.getElementById(`card-${quizId}-${qIdx}`).className = 'q-card answered-correct';
+    s.checked[qIdx] = true;
+    disableOptions(quizId, qIdx, data[qIdx].opts.length);
+  } else {
+    selectedBtn.className = 'opt-btn wrong';
+    selectedBtn.disabled = true;
+    // Don't disable others — let them try again or just show correct on Check All
+  }
+  updateProgress(quizId, data.length);
+}
+
+function disableOptions(quizId, qIdx, count) {
+  for (let i = 0; i < count; i++) {
+    const btn = document.getElementById(`opt-${quizId}-${qIdx}-${i}`);
+    if (btn) btn.disabled = true;
+  }
+}
+
+function checkAll(quizId) {
+  const data = getDataForQuiz(quizId);
+  const s = getState(quizId, data.length);
+  let correct = 0;
+
+  data.forEach((item, idx) => {
+    if (s.checked[idx]) { if (s.answers[idx] === item.ans) correct++; return; }
+    const chosen = s.answers[idx];
+    const ansIdx = item.ans;
+    const labels = ['A','B','C','D'];
+    const fb = document.getElementById(`fb-${quizId}-${idx}`);
+    const card = document.getElementById(`card-${quizId}-${idx}`);
+
+    // Disable all buttons
+    disableOptions(quizId, idx, item.opts.length);
+    s.checked[idx] = true;
+
+    // Reveal correct
+    const correctBtn = document.getElementById(`opt-${quizId}-${idx}-${ansIdx}`);
+    if (correctBtn) correctBtn.className = 'opt-btn reveal-correct';
+
+    if (chosen === null) {
+      fb.className = 'feedback show no';
+      fb.textContent = `— Not answered. Correct: ${labels[ansIdx]}`;
+      card.className = 'q-card answered-wrong';
+    } else if (chosen === ansIdx) {
+      fb.className = 'feedback show ok';
+      fb.textContent = '✓ Correct!';
+      card.className = 'q-card answered-correct';
+      correct++;
+    } else {
+      const wrongBtn = document.getElementById(`opt-${quizId}-${idx}-${chosen}`);
+      if (wrongBtn) wrongBtn.className = 'opt-btn wrong';
+      fb.className = 'feedback show no';
+      fb.textContent = `✗ Incorrect. Correct: ${labels[ansIdx]}`;
+      card.className = 'q-card answered-wrong';
+    }
+  });
+
+  showScore(quizId, correct, data.length);
+  updateProgress(quizId, data.length);
+}
+
+function showScore(quizId, correct, total) {
+  const box = document.getElementById('score-' + quizId);
+  const num = document.getElementById('score-' + quizId + '-num');
+  const msg = document.getElementById('score-' + quizId + '-msg');
+  if (!box) return;
+  box.className = 'score-box show';
+  num.textContent = `${correct}/${total}`;
+  const pct = Math.round(correct/total*100);
+  if (pct >= 90) msg.textContent = '🏆 Excellent! Outstanding performance!';
+  else if (pct >= 75) msg.textContent = '🎉 Good job! Keep it up!';
+  else if (pct >= 60) msg.textContent = '💪 Not bad — review the missed ones!';
+  else msg.textContent = '📖 Keep studying — you can do it!';
+  box.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function resetQuiz(quizId) {
+  delete state[quizId];
+  renderQuiz(quizId, getDataForQuiz(quizId));
+  const box = document.getElementById('score-' + quizId);
+  if (box) box.className = 'score-box';
+  const prog = document.getElementById('prog-' + quizId);
+  if (prog) prog.style.width = '0%';
+}
+
+function updateProgress(quizId, total) {
+  const s = state[quizId];
+  if (!s) return;
+  const done = s.checked.filter(Boolean).length;
+  const prog = document.getElementById('prog-' + quizId);
+  if (prog) prog.style.width = (done / total * 100) + '%';
+}
+
+function getDataForQuiz(quizId) {
+  if (quizId === 'grammar') return grammarQs;
+  if (quizId === 'vocab') return vocabQs;
+  if (quizId === 'midterm-ab') return midtermABQs;
+  if (quizId === 'midterm-c') return midtermCQs;
+  return [];
+}
+
+/* =========================================================
+   TABS
+   ========================================================= */
+function showTab(tab) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+/* =========================================================
+   INIT
+   ========================================================= */
+renderQuiz('grammar', grammarQs);
+renderQuiz('vocab', vocabQs);
+renderQuiz('midterm-ab', midtermABQs);
+renderQuiz('midterm-c', midtermCQs);
+
+</script>
+
+</body>
+</html>
